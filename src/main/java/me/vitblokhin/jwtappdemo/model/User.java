@@ -14,9 +14,9 @@ public class User extends AbstractEntity {
     @Column(name = "username")
     private String username;
     @Column(name = "first_name")
-    private String firstname;
+    private String firstName;
     @Column(name = "last_name")
-    private String lastname;
+    private String lastName;
     @Column(name = "email")
     private String email;
     @Column(name = "password")
