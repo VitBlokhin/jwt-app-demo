@@ -5,7 +5,6 @@ import me.vitblokhin.jwtappdemo.model.User;
 import me.vitblokhin.jwtappdemo.repository.UserRepository;
 import me.vitblokhin.jwtappdemo.security.jwt.JwtUser;
 import me.vitblokhin.jwtappdemo.security.jwt.JwtUserFactory;
-import me.vitblokhin.jwtappdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

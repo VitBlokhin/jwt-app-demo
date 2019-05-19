@@ -2,8 +2,6 @@ package me.vitblokhin.jwtappdemo.controller;
 
 import me.vitblokhin.jwtappdemo.dto.AuthenticationRequestDto;
 import me.vitblokhin.jwtappdemo.dto.AuthenticationResponseDto;
-import me.vitblokhin.jwtappdemo.model.User;
-import me.vitblokhin.jwtappdemo.repository.UserRepository;
 import me.vitblokhin.jwtappdemo.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 public class AuthenticationRestController {
@@ -40,8 +35,8 @@ public class AuthenticationRestController {
     }
 
     @PostMapping(URL + "login")
-    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody AuthenticationRequestDto requestDto){
-        try{
+    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody AuthenticationRequestDto requestDto) {
+        try {
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
             UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);

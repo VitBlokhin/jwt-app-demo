@@ -2,7 +2,6 @@ package me.vitblokhin.jwtappdemo.controller;
 
 import me.vitblokhin.jwtappdemo.exception.ItemAlreadyExistsException;
 import me.vitblokhin.jwtappdemo.exception.ItemNotFoundException;
-import me.vitblokhin.jwtappdemo.exception.JwtAuthenticationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

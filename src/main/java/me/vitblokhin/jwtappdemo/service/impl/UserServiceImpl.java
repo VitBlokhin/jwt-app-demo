@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        if(this.userRepository.findByUsername(userDto.getUsername()).isPresent()){
+        if (this.userRepository.findByUsername(userDto.getUsername()).isPresent()) {
             throw new ItemAlreadyExistsException("User with username: " + userDto.getUsername() + " is already exist");
         }
 

@@ -2,7 +2,6 @@ package me.vitblokhin.jwtappdemo.service;
 
 import me.vitblokhin.jwtappdemo.dto.ObjectFilter;
 import me.vitblokhin.jwtappdemo.dto.UserDto;
-import me.vitblokhin.jwtappdemo.model.User;
 
 import java.util.List;
 

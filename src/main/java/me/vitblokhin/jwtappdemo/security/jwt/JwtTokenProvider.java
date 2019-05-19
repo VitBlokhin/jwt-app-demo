@@ -1,7 +1,6 @@
 package me.vitblokhin.jwtappdemo.security.jwt;
 
 import io.jsonwebtoken.*;
-import me.vitblokhin.jwtappdemo.exception.JwtAuthenticationException;
 import me.vitblokhin.jwtappdemo.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,13 +77,12 @@ public class JwtTokenProvider {
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
-            //throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
     }
 
-    public String resolveToken(HttpServletRequest request){
+    public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(bearerToken != null && bearerToken.startsWith("Bearer_")){
+        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;

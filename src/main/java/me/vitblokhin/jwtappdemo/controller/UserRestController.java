@@ -2,7 +2,6 @@ package me.vitblokhin.jwtappdemo.controller;
 
 import me.vitblokhin.jwtappdemo.dto.ObjectFilter;
 import me.vitblokhin.jwtappdemo.dto.UserDto;
-import me.vitblokhin.jwtappdemo.model.User;
 import me.vitblokhin.jwtappdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class UserRestController {
     }
 
     @GetMapping(URL + "/{id}")
-    public ResponseEntity<UserDto> getOne(@PathVariable("id") Long id){
+    public ResponseEntity<UserDto> getOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 } // class UserRestController

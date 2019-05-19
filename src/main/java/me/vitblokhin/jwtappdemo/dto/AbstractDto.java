@@ -1,12 +1,10 @@
 package me.vitblokhin.jwtappdemo.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import me.vitblokhin.jwtappdemo.enums.Status;
 import me.vitblokhin.jwtappdemo.model.AbstractEntity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 public class AbstractDto implements Serializable {
