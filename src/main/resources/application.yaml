@@ -18,13 +18,6 @@ spring:
       ddl-auto: validate
   liquibase:
     change-log: classpath:/migration/changelog-master.xml
-  mvc:
-    static-path-pattern: /static/**
-    throw-exception-if-no-handler-found: true
-  servlet:
-    multipart:
-      max-request-size: 5MB
-      max-file-size: 12MB
 
 jwt:
   token:

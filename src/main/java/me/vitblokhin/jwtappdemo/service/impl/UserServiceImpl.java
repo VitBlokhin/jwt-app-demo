@@ -1,21 +1,25 @@
 package me.vitblokhin.jwtappdemo.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import me.vitblokhin.jwtappdemo.dto.ObjectFilter;
+import me.vitblokhin.jwtappdemo.dto.UserDto;
 import me.vitblokhin.jwtappdemo.enums.Status;
+import me.vitblokhin.jwtappdemo.exception.ItemAlreadyExistsException;
+import me.vitblokhin.jwtappdemo.exception.ItemNotFoundException;
 import me.vitblokhin.jwtappdemo.model.Role;
 import me.vitblokhin.jwtappdemo.model.User;
 import me.vitblokhin.jwtappdemo.repository.RoleRepository;
 import me.vitblokhin.jwtappdemo.repository.UserRepository;
 import me.vitblokhin.jwtappdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -34,62 +38,72 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
-        List<User> userList = userRepository.findAll();
+    public List<UserDto> getPage(ObjectFilter filter) {
 
-        log.info("getAll users: {} users found", userList.size());
+        List<UserDto> userList = userRepository
+                .findAll(PageRequest.of(filter.getPage(), filter.getSize()))
+                .getContent().stream().map(UserDto::new).collect(Collectors.toList());
+
+        log.info("UserService.getAll():  {} users found", userList.size());
         return userList;
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
+    public UserDto findById(Long id) {
+        return new UserDto(this.get(id));
     }
 
     @Override
-    public User findById(Long id) {
-        return this.get(id);
-    }
+    public UserDto create(UserDto userDto) {
+        if(this.userRepository.findByUsername(userDto.getUsername()).isPresent()){
+            throw new ItemAlreadyExistsException("User with username: " + userDto.getUsername() + " is already exist");
+        }
 
-    @Override
-    public User create(User user) {
         Role role = roleRepository.findByName("ROLE_USER");
         Set<Role> userRoles = new HashSet<>();
         userRoles.add(role);
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setUsername(userDto.getUsername());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
         user.setRoles(userRoles);
         user.setStatus(Status.ACTIVE);
 
-        User registeredUser = userRepository.save(user);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
-        log.info("create user: {}", registeredUser);
+        UserDto registeredUser = new UserDto(userRepository.save(user));
+
+        log.info("UserService.create() user: {}", registeredUser);
         return registeredUser;
     }
 
-    // TODO:
     @Override
-    public User update(User user) {
+    public UserDto update(UserDto user) {
         User oldUser = this.get(user.getId());
-        if(oldUser == null) {
-            log.error("update user error: user not found");
-            throw new RuntimeException("User not found");
-        }
 
         oldUser.setFirstName(user.getFirstName());
         oldUser.setLastName(user.getLastName());
-        User updatedUser = userRepository.save(user);
 
-        log.info("update user: {}", updatedUser);
+        oldUser.setUpdatedAt(LocalDateTime.now());
+
+        UserDto updatedUser = new UserDto(userRepository.save(oldUser));
+
+        log.info("UserService.update() user: {}", updatedUser);
         return updatedUser;
     }
 
     @Override
     public void delete(Long id) {
+        this.get(id);
         userRepository.deleteById(id);
     }
 
     private User get(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("User not found"));
     }
 } // class UserServiceImpl

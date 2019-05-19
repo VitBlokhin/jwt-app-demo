@@ -3,18 +3,22 @@ package me.vitblokhin.jwtappdemo.controller;
 import me.vitblokhin.jwtappdemo.dto.AuthenticationRequestDto;
 import me.vitblokhin.jwtappdemo.dto.AuthenticationResponseDto;
 import me.vitblokhin.jwtappdemo.model.User;
+import me.vitblokhin.jwtappdemo.repository.UserRepository;
 import me.vitblokhin.jwtappdemo.security.jwt.JwtTokenProvider;
-import me.vitblokhin.jwtappdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 public class AuthenticationRestController {
@@ -24,13 +28,15 @@ public class AuthenticationRestController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final UserService userService;
+    private final UserDetailsService jwtUserDetailsService;
 
     @Autowired
-    public AuthenticationRestController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
+    public AuthenticationRestController(AuthenticationManager authenticationManager,
+                                        JwtTokenProvider jwtTokenProvider,
+                                        UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
+        this.jwtUserDetailsService = userDetailsService;
     }
 
     @PostMapping(URL + "login")
@@ -38,12 +44,9 @@ public class AuthenticationRestController {
         try{
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
-            User user = userService.findByUsername(username);
+            UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(username);
 
-            if(user == null){
-                throw new UsernameNotFoundException("User with username: " + username + " not found");
-            }
-            String token = jwtTokenProvider.createToken(username, user.getRoles());
+            String token = jwtTokenProvider.createToken(userDetails);
 
             AuthenticationResponseDto authenticationResponse = new AuthenticationResponseDto();
             authenticationResponse.setUsername(username);

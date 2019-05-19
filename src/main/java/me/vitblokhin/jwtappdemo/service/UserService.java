@@ -1,19 +1,21 @@
 package me.vitblokhin.jwtappdemo.service;
 
+import me.vitblokhin.jwtappdemo.dto.ObjectFilter;
+import me.vitblokhin.jwtappdemo.dto.UserDto;
 import me.vitblokhin.jwtappdemo.model.User;
 
 import java.util.List;
 
 public interface UserService {
-    List<User> getAll();
+    List<UserDto> getPage(ObjectFilter filter);
 
-    User findByUsername(String username);
+    //UserDto findByUsername(String username);
 
-    User findById(Long id);
+    UserDto findById(Long id);
 
-    User create(User user);
+    UserDto create(UserDto userDto);
 
-    User update(User user);
+    UserDto update(UserDto userDto);
 
     void delete(Long id);
 } // interface UserService
